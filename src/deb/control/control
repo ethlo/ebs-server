@@ -1,0 +1,9 @@
+Package: ebs-server
+Version: 1.0
+Section: misc
+Priority: optional
+Architecture: all
+Maintainer: Morten Haraldsen <ebs@ethlo.com>
+Description: ethlo bucket store server
+Distribution: unstable
+License: Apache 2

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+INSTALLDIR="/usr/local/ebs-server/"
+CONFIGDIR="/usr/local/ebs-server/config"
+LOGDIR="/var/log/ebs-server"
+USER="ebs-server"
+GROUP="ebs-server"
+
+# Make sure user exists
+groupadd $GROUP
+useradd $USER -g $GROUP
+
+# Make sure log directory is writable
+mkdir -p $LOGDIR
+chown $USER:$GROUP -R "$LOGDIR"
+chmod 755 $LOGDIR
+
+# Make sure config directory is readable
+chown $USER:$GROUP -R "$CONFIGDIR"
+chmod 755 $CONFIGDIR
+chmod 644 $CONFIGDIR/*
+
+# Make sure work directory exists and is writable
+mkdir -p $INSTALLDIR/work
+chown $USER:$GROUP -R $INSTALLDIR
+chmod 755 $INSTALLDIR/work

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Stop service if it exists
+if [ -e "/etc/init.d/ebs-server" ]; then
+	invoke-rc.d ebs-server stop
+fi
