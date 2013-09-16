@@ -1,7 +1,7 @@
 package com.ethlo.bucketstore.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -10,13 +10,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ethlo.keyvalue.CasKeyValueDb;
 import com.ethlo.keyvalue.KeyValueDb;
 import com.ethlo.keyvalue.KeyValueDbManager;
 import com.ethlo.keyvalue.hashmap.HashmapKeyValueDbManager;
+import com.google.common.io.BaseEncoding;
 
 /**
  * 
@@ -25,6 +29,7 @@ import com.ethlo.keyvalue.hashmap.HashmapKeyValueDbManager;
  */
 public class BucketStoreServer extends HttpServlet
 {
+	private final Logger logger = LoggerFactory.getLogger(BucketStoreServer.class);
 	private static final long serialVersionUID = -181396322687204009L;
 	
 	// Backing store
@@ -34,12 +39,16 @@ public class BucketStoreServer extends HttpServlet
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
 		final KeyValueDb<ByteBuffer , byte[]> db = getDb(req.getPathInfo());
-		final byte[] value = db.get(getKey(req.getPathInfo()));
+		final ByteBuffer key = getKey(req.getPathInfo());
+		final byte[] value = db.get(key);
 		if (value != null)
 		{
-			resp.sendError(HttpServletResponse.SC_OK);
 			resp.setHeader("Content-Length", Long.toString(value.length));
-			IOUtils.copy(new ByteArrayInputStream(value), resp.getOutputStream());
+			final OutputStream out = resp.getOutputStream();
+			out.write(value);
+			out.flush();
+			out.close();
+			logger.info("Served {} from key {}", FileUtils.byteCountToDisplaySize(value.length), BaseEncoding.base16().encode(key.array()));
 		}
 		else
 		{
@@ -75,6 +84,7 @@ public class BucketStoreServer extends HttpServlet
 		final ByteBuffer key = getKey(req.getPathInfo());
 		final byte[] value = IOUtils.toByteArray(req.getInputStream());
 		db.put(key, value);
+		logger.info("Stored {} under key {}", FileUtils.byteCountToDisplaySize(value.length), BaseEncoding.base16().encode(key.array()));
 	}
 
 	@Override

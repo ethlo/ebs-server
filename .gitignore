@@ -6,6 +6,7 @@ bin
 .settings
 .project
 .classpath
+.extract
 
 # Package Files #
 *.jar

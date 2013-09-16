@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="file" class="ch.qos.logback.core.FileAppender">
+		<encoder>
+			<pattern>%d | %5p | %m%n%ex</pattern>
+		</encoder>
+		<file>/var/log/ebs-server/ebs.log</file>
+	</appender>
+
+ 	<appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+    	<appender-ref ref="file" />
+  	</appender>
+
+	<root level="INFO">
+	  <appender-ref ref="async"/>
+	</root>
+</configuration>
