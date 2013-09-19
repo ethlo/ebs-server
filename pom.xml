@@ -10,6 +10,13 @@
 		<developerConnection>scm:git:git@github.com:ethlo/bucketstore.git</developerConnection>
 		<url>http://github.com/ethlo/bucketstore</url>
 	</scm>
+	<repositories>
+		<repository>
+			<id>ethlo-snapshots</id>
+			<name>ethlo snapshots</name>
+			<url>http://ethlo.com/maven</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.glassfish.grizzly</groupId>
