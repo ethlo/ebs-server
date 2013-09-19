@@ -12,10 +12,15 @@
 	</scm>
 	<dependencies>
 		<dependency>
-	        <groupId>org.glassfish.grizzly</groupId>
-	        <artifactId>grizzly-http-server</artifactId>
-	        <version>2.3.5</version>
-	    </dependency>
+			<groupId>org.glassfish.grizzly</groupId>
+			<artifactId>grizzly-http-server</artifactId>
+			<version>2.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directmemory</groupId>
+			<artifactId>directmemory-ehcache</artifactId>
+			<version>0.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -81,7 +86,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-						<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.1</version>
@@ -93,7 +98,8 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>com.ethlo.bucketstore.server.grizzly.GrizzlyBucketStoreServer</mainClass>
 								</transformer>
 							</transformers>
