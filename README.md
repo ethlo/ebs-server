@@ -17,4 +17,6 @@ java -jar ebs-server.jar /etc/ebs/ebs.xml
 
 Install as linux service (.deb)
 ===============================
+```
 sudo dpkg -i ebs-server-1.0.deb
+```
