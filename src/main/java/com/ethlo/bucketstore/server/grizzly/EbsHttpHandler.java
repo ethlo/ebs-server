@@ -1,6 +1,5 @@
 package com.ethlo.bucketstore.server.grizzly;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -36,10 +35,11 @@ public class EbsHttpHandler extends HttpHandler
         final ByteBuffer key = getKey(pathInfo);
         if ("GET".equalsIgnoreCase(method))
         {
-        	final InputStream data = store.get(bucketName, key);
+        	final byte[] data = store.get(bucketName, key);
         	if (data != null)
         	{
-        		IOUtils.copy(data, response.getOutputStream());
+        		response.setHeader("Content-Length", Integer.toString(data.length));
+        		response.getOutputStream().write(data);
         	}
         	else
         	{
@@ -48,7 +48,7 @@ public class EbsHttpHandler extends HttpHandler
         }
         else if ("PUT".equalsIgnoreCase(method))
         {
-        	store.put(bucketName, key, request.getInputStream());
+        	store.put(bucketName, key, IOUtils.toByteArray(request.getInputStream()));
         }
         else if ("DELETE".equalsIgnoreCase(method))
         {

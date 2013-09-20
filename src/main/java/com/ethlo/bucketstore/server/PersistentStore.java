@@ -1,11 +1,7 @@
 package com.ethlo.bucketstore.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-
-import org.apache.commons.io.IOUtils;
 
 import com.ethlo.keyvalue.KeyValueDb;
 import com.ethlo.keyvalue.KeyValueDbManager;
@@ -25,16 +21,15 @@ public class PersistentStore implements StoreOperations
 	}
 
 	@Override
-	public void put(String bucketName, ByteBuffer key, InputStream data) throws IOException
+	public void put(String bucketName, ByteBuffer key, byte[] data) throws IOException
 	{
-		this.dbManager.getDb(bucketName, true).put(key, IOUtils.toByteArray(data));
+		this.dbManager.getDb(bucketName, true).put(key, data);
 	}
 
 	@Override
-	public InputStream get(String bucketName, ByteBuffer key)
+	public byte[] get(String bucketName, ByteBuffer key)
 	{
-		final byte[] data = this.dbManager.getDb(bucketName, true).get(key);
-		return data != null ? new ByteArrayInputStream(data) : null;
+		return this.dbManager.getDb(bucketName, true).get(key);
 	}
 
 	@Override

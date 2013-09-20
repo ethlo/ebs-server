@@ -1,11 +1,8 @@
 package com.ethlo.bucketstore.server;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.directmemory.cache.CacheService;
 
 /**
@@ -27,21 +24,22 @@ public class CachingStore implements StoreOperations
 	}
 
 	@Override
-	public void put(String bucketName, ByteBuffer key, InputStream data) throws IOException
+	public void put(String bucketName, ByteBuffer key, byte[] data) throws IOException
 	{
-		getCache(bucketName).free(key);
+		final CacheService<ByteBuffer, byte[]> cache = getCache(bucketName);
+		cache.free(key);
 		persistentStore.put(bucketName, key, data);
-		getCache(bucketName).putByteArray(key, IOUtils.toByteArray(data));
+		cache.putByteArray(key, data);
 	}
 	
 	@Override
-	public InputStream get(String bucketName, ByteBuffer key) throws IOException
+	public byte[] get(String bucketName, ByteBuffer key) throws IOException
 	{
 		final CacheService<ByteBuffer, byte[]> cache = getCache(bucketName);
 		final byte[] data = cache.retrieveByteArray(key);
 		if (data != null)
 		{
-			return new ByteArrayInputStream(data);
+			return data;
 		}
 		return persistentStore.get(bucketName, key);
 	}
