@@ -78,10 +78,10 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/deb/bin</outputDirectory>
+              <outputDirectory>target/deb/bin</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/src/bin</directory>
+                  <directory>src/deb</directory>
                   <includes>
                     <include>ebs-server</include>
                   </includes>
@@ -97,10 +97,10 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/deb/config</outputDirectory>
+              <outputDirectory>target/deb/config</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/config</directory>
+                  <directory>config</directory>
                   <includes>
                     <include>logging.properties</include>
                   </includes>
@@ -116,10 +116,10 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/deb/control</outputDirectory>
+              <outputDirectory>target/deb/control</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/src/deb/control</directory>
+                  <directory>src/deb/control</directory>
                   <filtering>true</filtering>
                 </resource>
               </resources>

@@ -1,0 +1,90 @@
+### BEGIN INIT INFO
+# Provides:          ebs-server
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: ethlo bucket store server
+# Description:       ethlo bucket store server
+### END INIT INFO
+
+#!/bin/sh
+## Configuration ##
+PORT=7790
+HEAP_SIZE=512M
+PERM_SIZE=128M
+GC_LOGFILE=/var/log/ebs-server/gc.log
+USER="ebs-server"
+JAVA_CMD=java
+
+###### DO NOT EDIT BELOW #####
+set -e
+INSTALL_DIR="/usr/local/ebs-server"
+#"$(cd "$(dirname "$0")" && cd ../ && pwd)"
+CFGDIR=$INSTALL_DIR/config
+EXTRACT_DIR=$INSTALL_DIR/work
+PIDFILE="$INSTALL_DIR/ebs-server.pid"
+case $1 in
+        start)
+	        if [ -e $PIDFILE ]; then
+				PID=$(cat $PIDFILE)
+				if [ -e /proc/${PID} ]; then
+					echo "Already running as PID $PID"
+					exit 0
+				fi
+			fi
+			test -e $GC_LOGFILE && mv --backup=numbered $GC_LOGFILE $GC_LOGFILE.arch
+			echo "Starting..."
+		        EXPR="sudo -u $USER $JAVA_CMD \
+		            -XX:MaxPermSize=$PERM_SIZE \
+		            -mx${HEAP_SIZE} \
+		            -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:$GC_LOGFILE -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp \
+		            -jar $INSTALL_DIR/ebs-server-${project.version}.jar $CFGDIR\
+		            -Djava.util.logging.config.file=$CFGDIR/config/logging.properties &"
+		        eval $EXPR; echo $! > $PIDFILE
+        ;;
+        stop)
+	    	if [ -e $PIDFILE ]
+			then
+				PID=$(cat $PIDFILE)
+				if [ -e /proc/${PID} ]; then
+					echo "Stopping process with PID $PID"
+					sudo kill $PID
+					set +e
+					wait $pid
+					rm -f $PIDFILE
+				else
+					echo "Not running (defunct PID file)"
+					rm -f $PIDFILE
+				fi
+			else
+				echo "Not running"
+			fi
+        ;;
+	    
+	    restart)
+			$0 stop
+			echo Waiting 5 seconds to cool down
+			sleep 5s
+			echo Starting back
+			exec $0 start
+        ;;
+        
+		status)
+			if [ -e $PIDFILE ]
+			then
+				PID=$(cat $PIDFILE)
+				if [ -e /proc/${PID} ]; then
+					echo "Status: Running as PID $PID"
+				else
+					echo "Status: Not running (defunct PID file)"
+				fi
+			else
+				echo "Status: Not running"
+			fi
+		;;
+        *)
+                echo "Usage: /etc/init.d/$0 start|stop|restart|status|info"
+                exit 1
+        ;;
+esac
