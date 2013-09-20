@@ -39,7 +39,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.ethlo.bucketstore.server.grizzly.GrizzlyBucketStoreServer</mainClass>
+                  <mainClass>com.ethlo.bucketstore.server.Bootstrap</mainClass>
                 </transformer>
               </transformers>
             </configuration>
