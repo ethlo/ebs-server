@@ -29,7 +29,11 @@ public class CachingStore implements StoreOperations
 		final CacheService<ByteBuffer, byte[]> cache = getCache(bucketName);
 		cache.free(key);
 		persistentStore.put(bucketName, key, data);
-		cache.putByteArray(key, data);
+		
+		if (data.length <= cacheConfig.getMaxObjectSize())
+		{
+			cache.putByteArray(key, data);
+		}
 	}
 	
 	@Override

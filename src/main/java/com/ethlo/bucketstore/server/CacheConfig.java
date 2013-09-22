@@ -1,5 +1,21 @@
 package com.ethlo.bucketstore.server;
 
-public class CacheConfig {
+/**
+ * 
+ * @author Morten Haraldsen
+ *
+ */
+public class CacheConfig
+{
+	private long maxObjectSize;
 
+	public long getMaxObjectSize()
+	{
+		return maxObjectSize;
+	}
+
+	public void setMaxObjectSize(long maxObjectSize)
+	{
+		this.maxObjectSize = maxObjectSize;
+	}
 }

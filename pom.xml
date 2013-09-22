@@ -172,6 +172,7 @@
 									<directory>config</directory>
 									<includes>
 										<include>logging.properties</include>
+										<include>ebs.xml</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -240,10 +241,17 @@
 										<filemode>600</filemode>
 									</mapper>
 								</data>
-								<!-- <data> <src>${basedir}/config/ebs</src> <type>directory</type> 
-									<includes>ebs.properties</includes> <mapper> <type>perm</type> <prefix>/usr/local/ebs-server/config</prefix> 
-									<user>ebs-server</user> <group>ebs-server</group> <filemode>600</filemode> 
-									</mapper> </data> -->
+								<data>
+									<src>${basedir}/config/ebs.xml</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/local/ebs-server/config</prefix>
+										<user>ebs-server</user>
+										<group>ebs-server</group>
+										<filemode>600</filemode>
+									</mapper>
+								</data>
 							</dataSet>
 						</configuration>
 					</execution>

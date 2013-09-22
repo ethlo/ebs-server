@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<alias alias="kvDbManager" name="hashMng"/>
+
+	<bean id="hashMng" class="com.ethlo.keyvalue.hashmap.HashmapKeyValueDbManager" />
+	
+	<bean id="persistentStore" class="com.ethlo.bucketstore.server.PersistentStore">
+			<constructor-arg ref="kvDbManager" />
+	</bean>
+	
+	<bean id="cacheStore" class="com.ethlo.bucketstore.server.CachingStore">
+		<constructor-arg ref="persistentStore" />
+		<constructor-arg value="#{cacheServiceBuilder.newCacheService()}" />
+		<constructor-arg>
+			<bean class="com.ethlo.bucketstore.server.CacheConfig">
+				<property name="maxObjectSize" value="2097152" />
+			</bean>
+		</constructor-arg>
+	</bean> 
+
+	<bean id="cacheServiceBuilder" class="org.apache.directmemory.DirectMemory">
+		<property name="numberOfBuffers" value="10"/>
+		<property name="size" value="1000"/>
+		<property name="initialCapacity" value="100000"/>
+		<property name="concurrencyLevel" value="4"/>
+	</bean>
+		
+	<bean id="grizzly" class="com.ethlo.bucketstore.server.grizzly.GrizzlyFactoryBean">
+		<constructor-arg>
+			<bean class="com.ethlo.bucketstore.server.grizzly.EbsHttpHandler">
+				<constructor-arg ref="cacheStore" />
+			</bean>
+		</constructor-arg>
+		<property name="port" value="7790" />
+		<property name="networkInterface" value="0.0.0.0" />
+		<property name="path" value="/" />
+	</bean>
+	
+<!--
+	<bean id="mysqlMng" class="com.ethlo.mycached.LegacyMyCachedClientManagerImpl">
+		<constructor-arg>
+			<bean class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+				<property name="driverClass" value="com.mysql.jdbc.Driver" />
+				<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/ssp?useUnicode=yes&amp;characterEncoding=UTF-8" />
+				<property name="username" value="root" />
+				<property name="password" value="qwerty123" />
+				<property name="idleConnectionTestPeriodInMinutes" value="2" />
+				<property name="idleMaxAgeInMinutes" value="5" />
+				<property name="maxConnectionsPerPartition" value="30" />
+				<property name="minConnectionsPerPartition" value="10" />
+				<property name="partitionCount" value="3" />
+				<property name="acquireIncrement" value="5" />
+				<property name="statementsCacheSize" value="100" />
+				<property name="releaseHelperThreads" value="3" />
+		        	<property name="logStatementsEnabled" value="true"/>
+			</bean>	
+		</constructor-arg>
+	</bean>
+	-->          
+</beans>

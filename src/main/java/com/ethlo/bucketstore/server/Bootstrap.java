@@ -14,10 +14,17 @@ public class Bootstrap
 {
 	public static void main(String[] args) throws Exception
 	{
+		new Bootstrap(args);
+	}
+
+	private FileSystemXmlApplicationContext ctx;
+	
+	public Bootstrap(String[] args)
+	{
 		// Install logger
 		SLF4JBridgeHandler.install();
 
-		if (args.length == 1)
+		if (args.length >= 1)
 		{
 			final String configLocation = args[0];
 			final File cfgFile = new File(configLocation, "ebs.xml");
@@ -25,9 +32,9 @@ public class Bootstrap
 			{
 				System.err.println("Cannot find config file ebs.xml in config directory " + configLocation);
 				System.exit(2);
-			}
-			
-			new FileSystemXmlApplicationContext(new String[]{cfgFile.toURI().toString()}, true);
+			}	
+			this.ctx = new FileSystemXmlApplicationContext(new String[]{cfgFile.toURI().toString()}, true);
+			this.ctx.registerShutdownHook();
 		}
 		else
 		{

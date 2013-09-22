@@ -39,8 +39,9 @@ case $1 in
 		            -XX:MaxPermSize=$PERM_SIZE \
 		            -mx${HEAP_SIZE} \
 		            -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:$GC_LOGFILE -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp \
-		            -jar $INSTALL_DIR/ebs-server-${project.version}.jar $CFGDIR\
+		            -jar $INSTALL_DIR/ebs-server-${project.version}.jar $CFGDIR \
 		            -Djava.util.logging.config.file=$CFGDIR/config/logging.properties &"
+		        echo $EXPR;
 		        eval $EXPR; echo $! > $PIDFILE
         ;;
         stop)
