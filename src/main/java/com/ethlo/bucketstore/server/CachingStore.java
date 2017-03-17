@@ -1,9 +1,10 @@
 package com.ethlo.bucketstore.server;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.directmemory.cache.CacheService;
+
+import com.ethlo.keyvalue.keys.ByteArrayKey;
 
 /**
  * 
@@ -13,10 +14,10 @@ import org.apache.directmemory.cache.CacheService;
 public class CachingStore implements StoreOperations
 {
 	private StoreOperations persistentStore;
-	private final CacheService<ByteBuffer, byte[]> cacheManager;
+	private final CacheService<ByteArrayKey, byte[]> cacheManager;
 	private final CacheConfig cacheConfig;
 	
-	public CachingStore(StoreOperations persistentBackend, CacheService<ByteBuffer, byte[]> cacheManager, CacheConfig cacheConfig)
+	public CachingStore(StoreOperations persistentBackend, CacheService<ByteArrayKey, byte[]> cacheManager, CacheConfig cacheConfig)
 	{
 		this.persistentStore = persistentBackend;
 		this.cacheManager = cacheManager;
@@ -24,9 +25,9 @@ public class CachingStore implements StoreOperations
 	}
 
 	@Override
-	public void put(String bucketName, ByteBuffer key, byte[] data) throws IOException
+	public void put(String bucketName, ByteArrayKey key, byte[] data) throws IOException
 	{
-		final CacheService<ByteBuffer, byte[]> cache = getCache(bucketName);
+		final CacheService<ByteArrayKey, byte[]> cache = getCache(bucketName);
 		cache.free(key);
 		persistentStore.put(bucketName, key, data);
 		
@@ -37,9 +38,9 @@ public class CachingStore implements StoreOperations
 	}
 	
 	@Override
-	public byte[] get(String bucketName, ByteBuffer key) throws IOException
+	public byte[] get(String bucketName, ByteArrayKey key) throws IOException
 	{
-		final CacheService<ByteBuffer, byte[]> cache = getCache(bucketName);
+		final CacheService<ByteArrayKey, byte[]> cache = getCache(bucketName);
 		final byte[] data = cache.retrieveByteArray(key);
 		if (data != null)
 		{
@@ -48,14 +49,14 @@ public class CachingStore implements StoreOperations
 		return persistentStore.get(bucketName, key);
 	}
 
-	private CacheService<ByteBuffer, byte[]> getCache(String bucketName)
+	private CacheService<ByteArrayKey, byte[]> getCache(String bucketName)
 	{
 		// TODO: Need one cache per bucket
 		return this.cacheManager;
 	}
 
 	@Override
-	public void delete(String bucketName, ByteBuffer key)
+	public void delete(String bucketName, ByteArrayKey key)
 	{
 		
 	}

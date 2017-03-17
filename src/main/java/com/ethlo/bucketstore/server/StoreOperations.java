@@ -1,7 +1,8 @@
 package com.ethlo.bucketstore.server;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
+
+import com.ethlo.keyvalue.keys.ByteArrayKey;
 
 /**
  * 
@@ -9,9 +10,9 @@ import java.nio.ByteBuffer;
  */
 public interface StoreOperations
 {
-	void put(String bucketName, ByteBuffer key, byte[] data) throws IOException;
+	void put(String bucketName, ByteArrayKey key, byte[] data) throws IOException;
 	
-	byte[] get(String bucketName, ByteBuffer key) throws IOException;
+	byte[] get(String bucketName, ByteArrayKey key) throws IOException;
 
-	void delete(String bucketName, ByteBuffer key);
+	void delete(String bucketName, ByteArrayKey key);
 }

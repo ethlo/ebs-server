@@ -1,6 +1,5 @@
 package com.ethlo.bucketstore.server.grizzly;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FilenameUtils;
@@ -11,6 +10,7 @@ import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.HttpStatus;
 
 import com.ethlo.bucketstore.server.StoreOperations;
+import com.ethlo.keyvalue.keys.ByteArrayKey;
 
 /**
  * 
@@ -32,7 +32,7 @@ public class EbsHttpHandler extends HttpHandler
         final String method = request.getMethod().getMethodString();
         final String pathInfo = request.getRequestURI();
         final String bucketName = getBucketName(pathInfo);
-        final ByteBuffer key = getKey(pathInfo);
+        final ByteArrayKey key = getKey(pathInfo);
         if ("GET".equalsIgnoreCase(method))
         {
         	final byte[] data = store.get(bucketName, key);
@@ -60,10 +60,10 @@ public class EbsHttpHandler extends HttpHandler
 		}
     }
 
-	private ByteBuffer getKey(String pathInfo)
+	private ByteArrayKey getKey(String pathInfo)
 	{
 		final String filename = FilenameUtils.getName(pathInfo);
-		return ByteBuffer.wrap(filename.getBytes(StandardCharsets.UTF_8));
+		return new ByteArrayKey(filename.getBytes(StandardCharsets.UTF_8));
 	}
 
 	private String getBucketName(String pathInfo)
